@@ -104,9 +104,9 @@
     const entries=summary.polls.slice().sort((a,b)=>b.year-a.year||String(b.end_date).localeCompare(String(a.end_date))||a.race.localeCompare(b.race,'zh-Hant'));
     $('institution-name').textContent=summary.name;
     $('institution-sub').textContent=`${summary.n} 份民調 · ${summary.years} 個選舉年份 · 第一名一致 ${fp(summary.hitRate*100)}`;
-    $('institution-score').textContent=f2(summary.score);
+    $('institution-score').textContent=fp(summary.score*100);
     $('institution-grade').textContent=summary.rating;
-    $('institution-grade-note').textContent=summary.rating==='資料不足'?'少於 4 份民調的正式評級門檻；暫定排序僅供探索':'僅依目前樣本自訂';
+    $('institution-grade-note').textContent=summary.rating==='資料不足'?'少於 4 份可判定投票方向民調的正式評級門檻；暫定排序僅供探索':'僅依目前樣本自訂';
     $('scatter').innerHTML=scatterPlot(entries);
     $('year-bars').innerHTML=yearBars(entries);
     $('record-count').textContent=`${entries.length} 份民調`;
