@@ -10,7 +10,7 @@
   const verifiedArchive = polls.filter(p=>p.kind==='recall'&&p.name==='鏡新聞').map(p=>({target:p.recall.target,race:p.race.replace(/^罷免｜/,''),yes:p.support['同意罷免'],no:p.support['不同意罷免'],likelyYes:p.recall.likely_yes,likelyNo:p.recall.likely_no,sample:p.sample,source_url:p.source_url,mae:p.mae}));
   const allInstitutions = logic.summarize(polls);
   const allNames = allInstitutions.map(x => x.name);
-  const state = { institution: 'TVBS' };
+  const state = { institution: '鏡新聞' };
   const f2 = n => Number.isFinite(Number(n)) ? Number(n).toFixed(2) : '—';
   const fp = n => Number.isFinite(Number(n)) ? `${Number(n).toFixed(1)}%` : '—';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -51,9 +51,11 @@
     const selected=logic.selectPolls(polls,filters());
     const summaries=logic.summarize(selected);
     const eligible=summaries.filter(s=>s.rating!=='資料不足').length;
-    $('filter-summary').textContent=`完整顯示 ${summaries.length} 個來源系列（${selected.length} 份民調）；${eligible} 個達評級門檻，${summaries.length - eligible} 個資料不足、不列正式名次。依平均誤差由低至高排列。`;
+    const rated=summaries.filter(s=>s.rating!=='資料不足');
+    const provisional=summaries.filter(s=>s.rating==='資料不足').slice().sort((a,b)=>a.score-b.score);
+    $('filter-summary').textContent=`完整顯示 ${summaries.length} 個來源系列（${selected.length} 份民調）；${eligible} 個達評級門檻，${summaries.length - eligible} 個資料不足、不列正式名次，但有暫定排序。公投與選舉建議分別篩選比較。`;
     // Every observed source is visible immediately, including those without enough data to grade.
-    $('rank-body').innerHTML=summaries.map((s,i)=>`<tr class="${s.rating==='資料不足'?'rank-unrated':'rank-rated'}"><td class="rank-index">${s.rating==='資料不足'?'—':String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${f2(s.score)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${fp(s.hitRate*100)}</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}" aria-label="查看 ${esc(s.name)} 的逐筆資料">查看 →</button></td></tr>`).join('');
+    $('rank-body').innerHTML=[...rated,...provisional].map((s,i)=>`<tr class="${s.rating==='資料不足'?'rank-unrated':'rank-rated'}"><td class="rank-index">${s.rating==='資料不足'?'暫'+String(i-rated.length+1):String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${f2(s.score)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${fp(s.hitRate*100)}</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}" aria-label="查看 ${esc(s.name)} 的逐筆資料">查看 →</button></td></tr>`).join('');
     $('rank-empty').hidden=!!summaries.length;
     if (!summaries.some(s=>s.name===state.institution)) state.institution=summaries[0]?.name || '';
     $('institution-select').innerHTML=summaries.length?opts(summaries.map(s=>s.name),state.institution):'<option value="">沒有符合的資料</option>';
@@ -99,7 +101,7 @@
     $('institution-sub').textContent=`${summary.n} 份民調 · ${summary.years} 個選舉年份 · 第一名一致 ${fp(summary.hitRate*100)}`;
     $('institution-score').textContent=f2(summary.score);
     $('institution-grade').textContent=summary.rating;
-    $('institution-grade-note').textContent=summary.rating==='資料不足'?'少於 5 份或未跨 3 年':'僅依目前樣本自訂';
+    $('institution-grade-note').textContent=summary.rating==='資料不足'?'未達 5 份且跨 3 年的正式評級門檻；暫定排序僅供探索':'僅依目前樣本自訂';
     $('scatter').innerHTML=scatterPlot(entries);
     $('year-bars').innerHTML=yearBars(entries);
     $('record-count').textContent=`${entries.length} 份民調`;
@@ -134,12 +136,12 @@
   function renderElection() {
     const year=Number($('election-year').value),race=$('election-race').value,entry=events.find(e=>e.year===year&&e.race===race),p=polls.find(z=>z.id===$('election-poll').value);
     if(!entry)return;
-    $('election-title').textContent=`${year} ${race==='總統'?'總統選舉':race+'首長選舉'}`;
+    $('election-title').textContent=`${year} ${race==='總統'?'總統選舉':entry.kind==='referendum'?'全國性'+race:entry.kind==='recall'?race:race+'首長選舉'}`;
     $('election-badge').textContent=p?'民調 × 開票':'僅開票資料';
     $('election-caption').textContent=p?`${p.name} · 資料日期 ${p.end_date} · 平均絕對差 ${f2(p.mae)} 個百分點`:'此場次尚未納入符合條件的民調';
     if(p){const names=Object.keys(p.normalized).sort((a,b)=>p.actual_norm[b]-p.actual_norm[a]);$('candidate-bars').innerHTML=names.map(n=>`<div class="candidate-line"><div class="candidate-name">${esc(n)}<small>原始有效票 ${f2(p.actual[n])}%</small></div><div class="bar-pair">${bar('民調比例化',p.normalized[n])}${bar('實際比例化',p.actual_norm[n],true)}</div></div>`).join('');$('election-note').textContent=`圖中僅比較此研究納入的主要候選人，涵蓋 ${f2(p.result_coverage)}% 的有效票。實際與民調均按相同候選人比例化；未表態分配是假設。`;}
     else{$('candidate-bars').innerHTML=entry.results.map(c=>`<div class="candidate-line"><div class="candidate-name">${esc(c.name)}<small>${esc(c.party)}</small></div><div class="bar-pair">${bar('實際得票',c.percent,true)}</div></div>`).join('');$('election-note').textContent='本研究目前沒有納入此場次的可比民調，不代表當時沒有進行或公布民調。';}
-    $('election-all').innerHTML=`<details class="record"><summary><strong>查看全部候選人開票數字</strong><span></span><span></span><span class="record-arrow">＋</span></summary><div class="record-body"><div class="table-scroll"><table class="data-table candidate-table"><thead><tr><th>候選人</th><th>政黨</th><th>得票數</th><th>有效票率</th><th>來源</th></tr></thead><tbody>${entry.results.map(c=>{const u=safeUrl(c.source);return `<tr><td>${esc(c.name)}</td><td>${esc(c.party)}</td><td>${Number(c.votes).toLocaleString('zh-TW')}</td><td>${f2(c.percent)}%</td><td>${u?`<a class="source-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer">來源 ↗</a>`:'待核'}</td></tr>`;}).join('')}</tbody></table></div><p class="evidence">多數地方開票為二手轉錄，尚未逐筆與中選會原始檔核對。</p></div></details>`;
+    $('election-all').innerHTML=`<details class="record"><summary><strong>查看全部候選人開票數字</strong><span></span><span></span><span class="record-arrow">＋</span></summary><div class="record-body"><div class="table-scroll"><table class="data-table candidate-table"><thead><tr><th>候選人</th><th>政黨</th><th>得票數</th><th>有效票率</th><th>來源</th></tr></thead><tbody>${entry.results.map(c=>{const u=safeUrl(c.source);return `<tr><td>${esc(c.name)}</td><td>${esc(c.party)}</td><td>${Number(c.votes).toLocaleString('zh-TW')}</td><td>${f2(c.percent)}%</td><td>${u?`<a class="source-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer">來源 ↗</a>`:'待核'}</td></tr>`;}).join('')}</tbody></table></div><p class="evidence">地方開票部分為二手轉錄，仍須逐筆核對；公投案以中選會結果為準。</p></div></details>`;
   }
 
   function renderParty(){ $('party-body').innerHTML=data.paired.map(m=>`<tr><td>${esc(m.event[0])} ${esc(m.event[1])}</td><td>${signed(m.dpp_gap)}</td><td>${signed(m.kmt_gap)}</td><td class="better">${signed(m.difference)}</td></tr>`).join(''); }
