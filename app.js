@@ -20,12 +20,16 @@
   const pp = p => `${p.year} ${p.race}`;
   const badge = grade => grade === '資料不足' ? 'insufficient' : grade === '完全不準確' || grade === '常有誤差' ? 'caution' : '';
   const totalAvg = polls.reduce((s,p) => s+p.mae,0)/polls.length;
+  // Accuracy is always evaluated against official vote returns, never against another pollster.
+  const actualWinner = p => Object.keys(p.actual_norm||{}).sort((a,b)=>p.actual_norm[b]-p.actual_norm[a])[0];
+  const predictedWinner = p => Object.keys(p.normalized||{}).sort((a,b)=>p.normalized[b]-p.normalized[a])[0];
+  const directionHit = p => predictedWinner(p)===actualWinner(p);
 
   $('hero-mae').innerHTML = `${f2(totalAvg)}<small> pp</small>`;
   $('metric-polls').textContent = polls.length;
   $('metric-races').textContent = new Set(polls.map(p => `${p.year}|${p.race}`)).size;
   $('metric-institutions').textContent = allNames.length;
-  $('metric-hit').textContent = fp(polls.filter(p=>p.winner_hit).length/polls.length*100);
+  $('metric-hit').textContent = fp(polls.filter(directionHit).length/polls.length*100);
 
   // The editorial overview is generated from the real candidate observations.
   const heroCounts=new Map();
