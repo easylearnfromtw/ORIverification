@@ -22,10 +22,10 @@
     <section id="rankings" class="section shell">
       <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h1>民調來源<span class="ink-accent">準確度排行榜</span></h1><p>公開本研究已收錄的<strong>全部民調來源系列</strong>，依年度等權平均絕對誤差由低至高排列。每個來源都能查看調查數量、涵蓋年份、評級與原始紀錄；不限定封關或最後一次調查，僅達最低樣本門檻者列正式名次。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
       <div class="filter-block"><div class="filter-heading"><span>篩選資料</span><button id="reset-filters" class="plain-button" type="button">重設篩選</button></div>
-        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option><option value="recall">罷免投票</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
+        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option><option value="recall">罷免投票</option><option value="referendum">全國性公投</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
         <p class="filter-foot" id="filter-summary" aria-live="polite"></p>
       </div>
-      <div class="ranking-note"><span class="note-mark">!</span><p><strong>本頁排名僅代表已收錄樣本，不是所有台灣民調的完整歷史排名。</strong> 來源系列可能是媒體、委託者、發布者或調查執行單位；至少 5 份民調、跨 3 個年份者才列正式名次，其餘全部列出但標註「資料不足」。<a href="#methodology">閱讀方法與限制 →</a></p></div>
+      <div class="ranking-note"><span class="note-mark">!</span><p><strong>本頁排名僅代表已收錄樣本，不是所有台灣民調的完整歷史排名。</strong> 來源系列可能是媒體、委託者、發布者或調查執行單位；至少 5 份民調、跨 3 個年份者才列正式名次，其餘列為「暫定名次」，並明確標註「資料不足」，不代表正式評級。<a href="#methodology">閱讀方法與限制 →</a></p></div>
       <div class="table-scroll"><table class="data-table rankings-table"><thead><tr><th scope="col">名次</th><th scope="col">來源系列／機構</th><th scope="col">年度等權平均差 <span class="subhead">百分點 ↓</span></th><th scope="col">樣本 <span class="subhead">份數／年份</span></th><th scope="col">第一名一致</th><th scope="col">暫定級距</th><th scope="col"><span class="sr-only">查看</span></th></tr></thead><tbody id="rank-body"></tbody></table></div>
       <div id="rank-empty" class="empty-state" hidden>目前條件沒有符合的資料，請嘗試調整篩選。</div>
       <p class="table-caption">所有已收錄來源均在此顯示。正式名次以有限樣本計算，分數低不保證未來民調較準；不同年份、選區與調查日期也可能影響可比性；同一場選舉的多次民調並非獨立選舉樣本。新增早期假設性三人對戰民調會進入探索性總分，但與正式登記後民調不可視為完全同質，且部分僅有二手彙整來源。自訂級距中的「完全不準確」僅表示本樣本平均差達 8 個百分點，不代表每份民調都錯，更不能據此推論調查機構有刻意偏誤。</p>
@@ -36,7 +36,7 @@
         <h2 id="hero-title">民調，<br><em>準確嗎？</em></h2>
         <p>從選前支持度到實際開票，我們把每一次差距攤開來看。比較民調來源、選區與年份，也看見數字背後的不確定性。</p>
         <div class="hero-actions"><a class="button primary" href="#rankings">探索機構準確度 <span>↗</span></a><a class="text-link" href="#methodology">了解研究方法 <span>↓</span></a></div>
-        <div class="hero-foot"><span>台灣選舉民調與開票比較</span><span>2000—2024 可比樣本</span></div>
+        <div class="hero-foot"><span>台灣選舉民調與開票比較</span><span>歷年選舉・罷免・公投</span></div>
       </div>
       <div class="hero-panel" aria-label="研究樣本摘要"><div class="panel-top"><span>THE DISTANCE<br>BETWEEN POLLS &amp; VOTES</span><span class="panel-number">全樣本散點</span></div>
         <div class="hero-chart" aria-hidden="true"><div class="chart-grid"><i></i><i></i><i></i><i></i><i></i></div><svg id="hero-plot" viewBox="0 0 360 185" preserveAspectRatio="none"></svg><span class="chart-x">POLL →</span><span class="chart-y">VOTE →</span></div>
