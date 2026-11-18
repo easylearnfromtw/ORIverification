@@ -17,3 +17,10 @@
 - `tests/poll-logic.test.cjs`：資料換算、年度等權與同場配對的測試。
 
 本機預覽可在此目錄執行 `python3 -m http.server 4173`，再開啟 `http://localhost:4173/`。使用 Node.js 可執行 `node --test tests/poll-logic.test.cjs`。本網站適合從 GitHub Pages 的預設分支根目錄發佈。
+
+## 新增研究來源與罷免（2026-11-18）
+- 年代民調：https://survey.eracom.com.tw/result.jsp （來源站讀取逾時，尚未完成歷史數據匯入）
+- 鏡新聞政經情勢民調：https://www.mnews.tw/topic/c7c93a23-29b2-4cb5-8f6f-e19bac2902c8 （待逐篇核對）
+- 佛光大學民意調查研究中心：https://public.fgu.edu.tw/zh_tw/page701/page602?locale=zh_tw （已確認機構，待取得歷史可比民調）
+- 新增罷免互動驗算：`ORILogic.evaluateRecall` 計算已表態比例化同意票率、實際有效票率差距與法定四分之一門檻。**尚未匯入新的可驗證罷免民調**，因此不修改原有 237 份樣本及排名。
+- 研究方法：總統／地方選舉與罷免分榜；全國性罷免態度、滿意度及尚未開票的選舉民調不得直接對照個別罷免開票。
