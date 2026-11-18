@@ -20,7 +20,7 @@
   </header>
   <main id="top">
     <section id="rankings" class="section shell">
-      <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h1>民調來源<span class="ink-accent">準確度排行榜</span></h1><p>公開本研究已收錄的<strong>全部民調來源系列</strong>，依年度等權平均絕對誤差由低至高排列。每個來源都能查看調查數量、涵蓋年份、評級與原始紀錄；僅達最低樣本門檻者列正式名次。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
+      <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h1>民調來源<span class="ink-accent">準確度排行榜</span></h1><p>公開本研究已收錄的<strong>全部民調來源系列</strong>，依年度等權平均絕對誤差由低至高排列。每個來源都能查看調查數量、涵蓋年份、評級與原始紀錄；不限定封關或最後一次調查，僅達最低樣本門檻者列正式名次。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
       <div class="filter-block"><div class="filter-heading"><span>篩選資料</span><button id="reset-filters" class="plain-button" type="button">重設篩選</button></div>
         <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
         <p class="filter-foot" id="filter-summary" aria-live="polite"></p>
@@ -28,7 +28,7 @@
       <div class="ranking-note"><span class="note-mark">!</span><p><strong>本頁排名僅代表已收錄樣本，不是所有台灣民調的完整歷史排名。</strong> 來源系列可能是媒體、委託者、發布者或調查執行單位；至少 5 份民調、跨 3 個年份者才列正式名次，其餘全部列出但標註「資料不足」。<a href="#methodology">閱讀方法與限制 →</a></p></div>
       <div class="table-scroll"><table class="data-table rankings-table"><thead><tr><th scope="col">名次</th><th scope="col">來源系列／機構</th><th scope="col">年度等權平均差 <span class="subhead">百分點 ↓</span></th><th scope="col">樣本 <span class="subhead">份數／年份</span></th><th scope="col">第一名一致</th><th scope="col">暫定級距</th><th scope="col"><span class="sr-only">查看</span></th></tr></thead><tbody id="rank-body"></tbody></table></div>
       <div id="rank-empty" class="empty-state" hidden>目前條件沒有符合的資料，請嘗試調整篩選。</div>
-      <p class="table-caption">所有已收錄來源均在此顯示。正式名次以有限樣本計算，分數低不保證未來民調較準；不同年份、選區與調查日期也可能影響可比性。自訂級距中的「完全不準確」僅表示本樣本平均差達 8 個百分點，不代表每份民調都錯，更不能據此推論調查機構有刻意偏誤。</p>
+      <p class="table-caption">所有已收錄來源均在此顯示。正式名次以有限樣本計算，分數低不保證未來民調較準；不同年份、選區與調查日期也可能影響可比性；同一場選舉的多次民調並非獨立選舉樣本。自訂級距中的「完全不準確」僅表示本樣本平均差達 8 個百分點，不代表每份民調都錯，更不能據此推論調查機構有刻意偏誤。</p>
     </section>
 
     <section class="hero shell" aria-labelledby="hero-title">
@@ -57,10 +57,10 @@
     </section>
 
     <section id="compare" class="section shell compare-section">
-      <div class="section-top"><div><div class="kicker">03 &nbsp; / &nbsp; HEAD-TO-HEAD</div><h2>同一場選舉，<span class="ink-accent">並排比較。</span></h2><p>只比較兩個系列都收錄的年份與選區，讓差距更容易理解。</p></div></div>
+      <div class="section-top"><div><div class="kicker">03 &nbsp; / &nbsp; HEAD-TO-HEAD</div><h2>同一場選舉，<span class="ink-accent">並排比較。</span></h2><p>只比較兩個系列都收錄的年份與選區；同一來源同場多次民調先取該場平均，避免任意挑選最後一筆。</p></div></div>
       <div class="comparison-controls"><label><span>來源 A</span><select id="compare-a"></select></label><span class="compare-vs">VS</span><label><span>來源 B</span><select id="compare-b"></select></label></div>
       <div class="compare-summary" id="compare-summary" aria-live="polite"></div><div class="table-scroll"><table class="data-table compare-table"><thead><tr><th scope="col">共同選舉</th><th scope="col" id="compare-head-a">來源 A</th><th scope="col" id="compare-head-b">來源 B</th><th scope="col">差距較小</th></tr></thead><tbody id="compare-body"></tbody></table></div><div id="compare-empty" class="empty-state" hidden>兩個來源目前沒有共同場次，請換一組來源。</div>
-      <p class="table-caption">共同場次仍可能採用不同調查日期、問題與樣本；僅比較目前蒐得的資料，不能據此斷定誰整體上一定較準。</p>
+      <p class="table-caption">共同場次採各來源該場所有可比調查的平均誤差；仍可能採用不同調查日期、問題與樣本；僅比較目前蒐得的資料，不能據此斷定誰整體上一定較準。</p>
     </section>
 
     <section id="elections" class="section shell election-section">
@@ -89,7 +89,7 @@
       <div class="method-grid"><div class="method-intro"><span class="method-index">M / 01</span><p>支持率與得票率的分母不同。這份研究先統一候選人組合，再比較差距。</p><a href="report.pdf" target="_blank" rel="noopener noreferrer">下載完整研究報告（PDF） ↗</a><a href="data.xlsx">下載逐筆資料表（Excel） ↗</a><a href="https://db.cec.gov.tw/ElecTable/" target="_blank" rel="noopener noreferrer">中選會選舉資料庫 ↗</a><a href="https://education.tfc-taiwan.org.tw/articles/9944" target="_blank" rel="noopener noreferrer">如何解讀民調 ↗</a></div><div class="accordions">
         <details open><summary>01　如何計算民調誤差？</summary><div><p>先把納入候選人的原始支持率除以其支持率合計，再把實際得票率除以相同候選人的得票率合計。兩者差距的絕對值，取候選人平均。</p><p class="formula">單份平均絕對差 = 各候選人 |比例化支持率 − 比例化實際票率| 的平均</p><p>這相當於假設未表態者依已表態比例分配；實際選民可能不同，也不等同民調機構自己的得票預估。</p></div></details>
         <details><summary>02　機構分數和五級標籤怎麼來？</summary><div><p>先計算每個年份的民調平均差，再讓有資料的年份等權。至少 5 份民調、跨 3 個年份才評級。門檻是本研究自訂，並非法定或學界通用標準。</p><ul class="grade-list"><li>小於 2：最為準確</li><li>2 至小於 4：時常準確</li><li>4 至小於 6：時有誤差</li><li>6 至小於 8：常有誤差</li><li>8 以上：完全不準確（本樣本級距，非每份均錯）</li></ul></div></details>
-        <details><summary>03　資料如何挑選？有哪些缺口？</summary><div><p>每個來源在同一選舉，以目前找到最晚一次為候選；主分析採投票前 11–30 天資料。地方候選人以事後有效票至少 5%、合計至少 90% 為條件，這會產生回溯篩選限制。</p><p>1996 年尚未納入選前民調；2009 年以前地方選舉、各機構完整封關調查與部分一手開票仍未補齊。部分資料日期可能是調查完成日或公開日。</p></div></details>
+        <details><summary>03　資料如何挑選？有哪些缺口？</summary><div><p>不限定封關、最後一次或特定選前天數；同一來源對同一場選舉的不同日期調查，原則上逐筆保留，並依調查完成日及發布日標示。完整資料庫可收錄政策、施政與未開票調查，但只有題目、選區、選項與實際結果可比的資料才計算開票誤差。地方候選人以事後有效票至少 5%、合計至少 90% 為條件，仍有回溯篩選限制。</p><p>1996 年尚未納入選前民調；2009 年以前地方選舉、各機構完整封關調查與部分一手開票仍未補齊。部分資料日期可能是調查完成日或公開日。</p></div></details>
         <details><summary>05　新增來源、學校與罷免何時進榜？</summary><div><p>先核對調查對象、抽樣方式、調查日期、委託方、實際執行機構、完整選項及正式結果，再去重與計分。未舉行投票的選舉調查、施政滿意度及全國性罷免態度題只留存為資料，不列入準確度排名。</p><p>罷免與一般選舉先各自分榜；罷免需檢驗同意／不同意有效票率誤差、勝負方向及四分之一門檻，避免只憑同意率判斷通過。</p></div></details><details><summary>04　回歸線和政黨比較能說明什麼？</summary><div><p>回歸線描述這批資料中比例化民調與開票之間的線性關係；同場多份民調共享開票結果，點並非獨立，不能把線條或 R² 當成預測準確率。</p><p>公開的政黨或競選總部系列可能受調查時點、問卷與選擇性公布影響；目前無法推論政治背景造成偏差或認定造假。</p></div></details>
       </div></div>
     </section>
