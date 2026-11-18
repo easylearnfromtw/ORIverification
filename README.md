@@ -51,3 +51,9 @@
 - 元大報告：https://www.yuantafutures.com.tw/UploadFile/Artical/202312/1703813789070_%E3%80%90%E5%85%83%E5%A4%A7%E6%9C%9F_%E7%A0%94%E7%A9%B6%E5%9C%98%E9%9A%8A%E3%80%912024%E5%B9%B4%E4%BA%8B%E4%BB%B6%E9%A2%A8%E9%9A%AA%E9%A0%90%E5%91%8A%202023.12.29.pdf
 - 美麗島原始報告：https://my-formosa.com.tw/DOC_195752.htm
 - 多機構彙編仍屬二手來源，尚待逐筆補上機構原始 PDF、樣本數、執行者與題目；不能宣稱已收錄全部歷史調查。
+
+## 更深入追溯的早期多波次民調（2026-11-18）
+
+- 新增 30 筆 2022/12–2023/09 的 2024 總統選舉早期三人對戰民調，來源包括 TVBS、美麗島、臺灣民意基金會。總可比樣本達 281 筆。
+- 資料逐波來源：https://r-lover.com/sharing/info-gathering/taiwan-2024-president-election-poll/ 。屬二手彙整；每筆 `source_tier=secondary`、`scenario=early_hypothetical_three_way`，尚待逐一查核原始調查問卷、執行日期與方法。
+- 早期假設性候選人組合與正式登記後不同。現行總榜依使用者要求納入全部可比三人支持率，但此類早期調查的誤差混合了民意變動、假設情境與測量誤差；研究級排名應另提供僅正式候選人期間與距投票日分層的敏感度分析。
