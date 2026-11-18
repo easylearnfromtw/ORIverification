@@ -57,3 +57,10 @@
 - 新增 30 筆 2022/12–2023/09 的 2024 總統選舉早期三人對戰民調，來源包括 TVBS、美麗島、臺灣民意基金會。總可比樣本達 281 筆。
 - 資料逐波來源：https://r-lover.com/sharing/info-gathering/taiwan-2024-president-election-poll/ 。屬二手彙整；每筆 `source_tier=secondary`、`scenario=early_hypothetical_three_way`，尚待逐一查核原始調查問卷、執行日期與方法。
 - 早期假設性候選人組合與正式登記後不同。現行總榜依使用者要求納入全部可比三人支持率，但此類早期調查的誤差混合了民意變動、假設情境與測量誤差；研究級排名應另提供僅正式候選人期間與距投票日分層的敏感度分析。
+
+## 鏡新聞 2025 大罷免完整三波選區匯入（2026-11-18）
+
+- 追加新北 6 區、桃園 6 區，共 12 筆；原有臺中 6 區，共 18 筆已配對開票並進入總榜。總民調筆數 293。
+- 新北原始報導：https://www.mnews.tw/story/20250701nm001 、https://www.mnews.tw/story/20250701nm010 、https://www.mnews.tw/story/20250701nm011 ；桃園：https://www.mnews.tw/story/20250708nm009 ；臺中：https://www.mnews.tw/story/20250714nm001 。
+- 7/26 票數比對：https://hakkanews.tw/2025/07/26/214972/ ；8/23 票數比對：https://election.ltn.com.tw/recall2025/ 。羅明才案的不同新聞開票票數存在差異，需再次對中選會原始公告；已在單筆註記。
+- 網站新增鏡新聞快捷篩選，資料表改為從 data.js 動態顯示全部 18 筆，而不是硬編碼六筆。正式名次跨 3 年門檻仍適用；無正式名次不代表未計算誤差。
