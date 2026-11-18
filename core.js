@@ -13,12 +13,28 @@
     if (score < 8) return '常有誤差';
     return '完全不準確';
   }
+  function canonicalBrand(name) {
+    const s=String(name||'').trim().replace(/臺/g,'台');
+    if (/^(民進黨|民主進步黨)(?:[（(].*[）)])?$/.test(s) || /^(民進黨|民主進步黨)(中央黨部|民調中心|民意調查中心)$/.test(s)) return '民進黨';
+    if (/^(國民黨|中國國民黨)(?:[（(].*[）)])?$/.test(s) || /^(國民黨|中國國民黨)(中央黨部|民調中心|民意調查中心)$/.test(s)) return '國民黨';
+    if (/^(民眾黨|台灣民眾黨)(?:[（(].*[）)])?$/.test(s)) return '民眾黨';
+    if (/^(台灣民意基金會|臺灣民意基金會)$/.test(s)) return '台灣民意基金會';
+    if (/^(風傳媒|風傳媒民調|風傳媒民調中心)$/.test(s)) return '風傳媒';
+    if (/^(鏡新聞|鏡新聞民調|鏡新聞民調中心)$/.test(s)) return '鏡新聞';
+    if (/^(美麗島|美麗島電子報|美麗島民調)$/.test(s)) return '美麗島';
+    if (/^(TVBS|TVBS民調|TVBS民意調查中心)$/.test(s)) return 'TVBS';
+    if (/^(ETtoday|ETtoday民調|ETtoday民調雲)$/.test(s)) return 'ETtoday';
+    if (/^(全國公信力|全國公信力民意調查股份有限公司)$/.test(s)) return '全國公信力';
+    if (/^(趨勢|趨勢民意調查|趨勢民意調查股份有限公司)$/.test(s)) return '趨勢民意調查';
+    return s;
+  }
   function summarize(polls) {
     const groups = new Map();
     for (const poll of polls) {
       if (!Number.isFinite(poll.mae)) continue;
-      if (!groups.has(poll.name)) groups.set(poll.name, []);
-      groups.get(poll.name).push(poll);
+      const brand=canonicalBrand(poll.name);
+      if (!groups.has(brand)) groups.set(brand, []);
+      groups.get(brand).push(poll);
     }
     return [...groups].map(([name, entries]) => {
       const byYear = new Map();
@@ -41,14 +57,14 @@
       if (filters.kind === 'local' && (p.race === '總統' || p.kind === 'recall' || p.kind === 'referendum')) return false;
       if (filters.kind === 'referendum' && p.kind !== 'referendum') return false;
       if (filters.kind === 'recall' && p.kind !== 'recall') return false;
-      return !query || [p.name,p.sponsor,p.executor].some(v => String(v || '').toLocaleLowerCase().includes(query));
+      return !query || [p.name,canonicalBrand(p.name),p.sponsor,p.executor].some(v => String(v || '').toLocaleLowerCase().includes(query));
     });
   }
   function commonRaces(polls, leftName, rightName) {
     if (!leftName || !rightName || leftName === rightName) return [];
     const collect = name => {
       const grouped = new Map();
-      for (const p of polls.filter(p => p.name === name && Number.isFinite(p.mae))) {
+      for (const p of polls.filter(p => canonicalBrand(p.name) === name && Number.isFinite(p.mae))) {
         const key = `${p.year}|${p.race}`;
         if (!grouped.has(key)) grouped.set(key, []);
         grouped.get(key).push(p);
@@ -83,7 +99,7 @@
     const threshold=Math.ceil(electors/4),passed=voteYes>voteNo&&voteYes>=threshold;
     return {pollShare,actualShare,absoluteError:Math.abs(pollShare-actualShare),signedError:pollShare-actualShare,threshold,passed,pollMajorityYes:pollYes>pollNo,actualMajorityYes:voteYes>voteNo};
   }
-  const api = {normalize,grade,summarize,selectPolls,commonRaces,regression,evaluateRecall};
+  const api = {normalize,grade,canonicalBrand,summarize,selectPolls,commonRaces,regression,evaluateRecall};
   if (typeof module !== 'undefined') module.exports = api;
   root.ORILogic = api;
 })(typeof globalThis === 'undefined' ? this : globalThis);
