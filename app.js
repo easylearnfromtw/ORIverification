@@ -111,8 +111,8 @@
     $('compare-empty').hidden=!!shared.length;
     if(!shared.length){$('compare-summary').textContent=left===right?'請選擇不同的兩個來源系列。':'目前篩選下沒有共同場次。';$('compare-body').innerHTML='';return;}
     const a=shared.reduce((s,x)=>s+x.left.mae,0)/shared.length,b=shared.reduce((s,x)=>s+x.right.mae,0)/shared.length;
-    $('compare-summary').innerHTML=`<span>共同場次 <strong>${shared.length}</strong></span><span>${esc(left)} 平均 <strong>${f2(a)}</strong> pp</span><span>${esc(right)} 平均 <strong>${f2(b)}</strong> pp</span>`;
-    $('compare-body').innerHTML=shared.map(x=>{const dif=x.left.mae-x.right.mae;const win=Math.abs(dif)<0.005?'接近':dif<0?left:right;return `<tr><td><strong class="source-name">${esc(pp(x))}</strong></td><td><strong>${f2(x.left.mae)}</strong> pp<span class="date-sub">${esc(x.left.end_date)}</span></td><td><strong>${f2(x.right.mae)}</strong> pp<span class="date-sub">${esc(x.right.end_date)}</span></td><td class="better">${esc(win)}</td></tr>`;}).join('');
+    $('compare-summary').innerHTML=`<span>共同選舉 <strong>${shared.length}</strong></span><span>${esc(left)} 平均 <strong>${f2(a)}</strong> pp</span><span>${esc(right)} 平均 <strong>${f2(b)}</strong> pp</span>`;
+    $('compare-body').innerHTML=shared.map(x=>{const dif=x.left.mae-x.right.mae;const win=Math.abs(dif)<0.005?'接近':dif<0?left:right;return `<tr><td><strong class="source-name">${esc(pp(x))}</strong></td><td><strong>${f2(x.left.mae)}</strong> pp<span class="date-sub">${x.left.count} 份調查平均</span></td><td><strong>${f2(x.right.mae)}</strong> pp<span class="date-sub">${x.right.count} 份調查平均</span></td><td class="better">${esc(win)}</td></tr>`;}).join('');
   }
 
   function updateElectionRaces() {
