@@ -67,7 +67,15 @@
     const slope = valid.reduce((s,p) => s+(p.w ?? 1)*(p.x-xMean)*(p.y-yMean),0)/variance;
     return {slope,intercept:yMean-slope*xMean};
   }
-  const api = {normalize,grade,summarize,selectPolls,commonRaces,regression};
+  function evaluateRecall(input) {
+    const {pollYes,pollNo,voteYes,voteNo,electors}=input;
+    const vals=[pollYes,pollNo,voteYes,voteNo,electors];
+    if(vals.some(v=>!Number.isFinite(v))||pollYes<0||pollNo<0||pollYes+pollNo<=0||pollYes+pollNo>100||voteYes<0||voteNo<0||voteYes+voteNo<=0||electors<=0||!Number.isInteger(voteYes)||!Number.isInteger(voteNo)||!Number.isInteger(electors)||voteYes+voteNo>electors) return null;
+    const pollShare=pollYes/(pollYes+pollNo)*100,actualShare=voteYes/(voteYes+voteNo)*100;
+    const threshold=Math.ceil(electors/4),passed=voteYes>voteNo&&voteYes>=threshold;
+    return {pollShare,actualShare,absoluteError:Math.abs(pollShare-actualShare),signedError:pollShare-actualShare,threshold,passed,pollMajorityYes:pollYes>pollNo,actualMajorityYes:voteYes>voteNo};
+  }
+  const api = {normalize,grade,summarize,selectPolls,commonRaces,regression,evaluateRecall};
   if (typeof module !== 'undefined') module.exports = api;
   root.ORILogic = api;
 })(typeof globalThis === 'undefined' ? this : globalThis);
