@@ -6,7 +6,7 @@
     return Object.fromEntries(Object.entries(values).map(([name, value]) => [name, Number(value) / total * 100]));
   }
   function grade(score, count, years) {
-    if (!Number.isFinite(score) || count < 5 || years < 3) return '資料不足';
+    if (!Number.isFinite(score) || count < 4) return '資料不足';
     if (score < 2) return '最為準確';
     if (score < 4) return '時常準確';
     if (score < 6) return '時有誤差';
