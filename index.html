@@ -15,7 +15,7 @@
   <div class="edition"><span>ORIENTATION &nbsp; / &nbsp; PUBLIC OPINION ARCHIVE</span><span>RESEARCH NO. 001 &nbsp;・&nbsp; 2026.11.18</span></div>
   <header class="masthead shell">
     <a class="identity" href="#top" aria-label="ORI Verification 首頁"><span class="identity-box">ORI<span class="identity-dot">.</span></span><span class="identity-copy"><strong>VERIFICATION</strong><small>公共數據研究</small></span></a>
-    <nav aria-label="主要導覽"><a href="#rankings">機構準確度</a><a href="#compare">機構比較</a><a href="#elections">逐場選舉</a><a href="#methodology">研究方法</a></nav>
+    <nav aria-label="主要導覽"><a href="#rankings">機構準確度</a><a href="#compare">機構比較</a><a href="#elections">逐場選舉</a><a href="#expansion">新增來源／罷免</a><a href="#methodology">研究方法</a></nav>
     <button class="header-download" id="download-csv" type="button">下載資料 <span>↗</span></button>
   </header>
   <main id="top">
@@ -74,13 +74,23 @@
       <div class="politics-grid"><div><div class="quote-mark">“</div><blockquote>資料可以提出問題，<br>但不能代替因果證據。</blockquote><p>在 5 場可配對的藍綠列示系列中，綠方「綠減藍」差距相對藍方較高。調查時點、抽樣與選擇性公布均可能影響結果，不能直接歸因於政黨背景。</p><p class="table-caption">2004 年藍方為兩份調查的平均；其餘各方各一份。列示名稱及實際委託、執行關係仍需逐筆核實。</p></div><div><div class="table-scroll"><table class="data-table political-table"><thead><tr><th scope="col">選舉</th><th scope="col">綠方誤差</th><th scope="col">藍方誤差</th><th scope="col">兩者差</th></tr></thead><tbody id="party-body"></tbody></table></div><small class="muted">單位：百分點；正值不代表該份民調一定高估綠營。</small></div></div>
     </section>
 
+    <section id="expansion" class="section shell expansion-section">
+      <div class="section-top"><div><div class="kicker">07 &nbsp; / &nbsp; SOURCE EXPANSION</div><h2>新增民調資料庫與<span class="ink-accent">罷免驗證</span></h2><p>以下是已確認的研究來源與匯入進度。來源名錄不等於已納入準確度計算；未核對完整數字及正式開票的資料，不會加入排行榜。</p></div></div>
+      <div class="source-grid">
+        <article class="source-card"><span class="tiny-label">MEDIA ARCHIVE · 待完整擷取</span><h3>年代民調</h3><p>指定來源：年代調查資料庫。原站本次讀取逾時；保留待核資料，不假設所有頁面已擷取。</p><a href="https://survey.eracom.com.tw/result.jsp" target="_blank" rel="noopener noreferrer">開啟原始資料庫 ↗</a></article>
+        <article class="source-card"><span class="tiny-label">MEDIA ARCHIVE · 逐篇查核中</span><h3>鏡新聞政經情勢民調</h3><p>已找到選舉、罷免及一般政策調查專題。只有具備同一選區、同一題目與正式結果者，才能進入誤差評分。</p><a href="https://www.mnews.tw/topic/c7c93a23-29b2-4cb5-8f6f-e19bac2902c8" target="_blank" rel="noopener noreferrer">開啟鏡新聞專題 ↗</a></article>
+        <article class="source-card"><span class="tiny-label">UNIVERSITY · 待核對歷史樣本</span><h3>佛光大學民意調查研究中心</h3><p>已確認機構存在，將依調查執行者身分建立獨立系列。未找到可驗證的完整歷史選舉結果前，不賦予名次。</p><a href="https://public.fgu.edu.tw/zh_tw/page701/page602?locale=zh_tw" target="_blank" rel="noopener noreferrer">查看大學民調中心 ↗</a></article>
+      </div>
+      <div class="recall-panel"><div><span class="tiny-label">RECALL POLLING · 獨立計分模型</span><h3>罷免民調與實際開票比對</h3><p>罷免需分開核對「同意／不同意的有效票率」與「是否達法定通過門檻」。下方是可互動的公式驗算工具，<strong>不是已匯入的歷史罷免民調</strong>。</p><div class="recall-inputs"><label>民調同意（%）<input id="recall-poll-yes" type="number" min="0" max="100" step="0.1" placeholder="例如 45"></label><label>民調不同意（%）<input id="recall-poll-no" type="number" min="0" max="100" step="0.1" placeholder="例如 40"></label><label>實際同意票數<input id="recall-vote-yes" type="number" min="0" step="1" placeholder="同意票"></label><label>實際不同意票數<input id="recall-vote-no" type="number" min="0" step="1" placeholder="不同意票"></label><label>原選舉區選舉人總數<input id="recall-electors" type="number" min="1" step="1" placeholder="法定門檻分母"></label></div><p id="recall-output" class="recall-output" aria-live="polite">輸入同一罷免案的民調及正式開票數據，即可驗算。</p></div><p class="table-caption">此模型假設民調詢問的是該罷免案同意／不同意投票意向，且兩者可依已表態者比例化。全國性「贊不贊成大罷免」或「會不會去投票」不能與個別選區的同意票率直接比較。罷免結果依同意票多於不同意票且同意票達原選舉區選舉人總數四分之一判定。<a href="https://db.cec.gov.tw/ElecTable/" target="_blank" rel="noopener noreferrer">中選會資料庫 ↗</a></p></div>
+    </section>
+
     <section id="methodology" class="section shell methodology-section">
       <div class="section-top"><div><div class="kicker">06 &nbsp; / &nbsp; METHODOLOGY</div><h2>讀懂數字之前，<br><span class="ink-accent">先讀懂方法。</span></h2><p>每個結論都有邊界；以下保留計算口徑與目前尚未完成的工作。</p></div></div>
       <div class="method-grid"><div class="method-intro"><span class="method-index">M / 01</span><p>支持率與得票率的分母不同。這份研究先統一候選人組合，再比較差距。</p><a href="report.pdf" target="_blank" rel="noopener noreferrer">下載完整研究報告（PDF） ↗</a><a href="data.xlsx">下載逐筆資料表（Excel） ↗</a><a href="https://db.cec.gov.tw/ElecTable/" target="_blank" rel="noopener noreferrer">中選會選舉資料庫 ↗</a><a href="https://education.tfc-taiwan.org.tw/articles/9944" target="_blank" rel="noopener noreferrer">如何解讀民調 ↗</a></div><div class="accordions">
         <details open><summary>01　如何計算民調誤差？</summary><div><p>先把納入候選人的原始支持率除以其支持率合計，再把實際得票率除以相同候選人的得票率合計。兩者差距的絕對值，取候選人平均。</p><p class="formula">單份平均絕對差 = 各候選人 |比例化支持率 − 比例化實際票率| 的平均</p><p>這相當於假設未表態者依已表態比例分配；實際選民可能不同，也不等同民調機構自己的得票預估。</p></div></details>
         <details><summary>02　機構分數和五級標籤怎麼來？</summary><div><p>先計算每個年份的民調平均差，再讓有資料的年份等權。至少 5 份民調、跨 3 個年份才評級。門檻是本研究自訂，並非法定或學界通用標準。</p><ul class="grade-list"><li>小於 2：最為準確</li><li>2 至小於 4：時常準確</li><li>4 至小於 6：時有誤差</li><li>6 至小於 8：常有誤差</li><li>8 以上：完全不準確（本樣本級距，非每份均錯）</li></ul></div></details>
         <details><summary>03　資料如何挑選？有哪些缺口？</summary><div><p>每個來源在同一選舉，以目前找到最晚一次為候選；主分析採投票前 11–30 天資料。地方候選人以事後有效票至少 5%、合計至少 90% 為條件，這會產生回溯篩選限制。</p><p>1996 年尚未納入選前民調；2009 年以前地方選舉、各機構完整封關調查與部分一手開票仍未補齊。部分資料日期可能是調查完成日或公開日。</p></div></details>
-        <details><summary>04　回歸線和政黨比較能說明什麼？</summary><div><p>回歸線描述這批資料中比例化民調與開票之間的線性關係；同場多份民調共享開票結果，點並非獨立，不能把線條或 R² 當成預測準確率。</p><p>公開的政黨或競選總部系列可能受調查時點、問卷與選擇性公布影響；目前無法推論政治背景造成偏差或認定造假。</p></div></details>
+        <details><summary>05　新增來源、學校與罷免何時進榜？</summary><div><p>先核對調查對象、抽樣方式、調查日期、委託方、實際執行機構、完整選項及正式結果，再去重與計分。未舉行投票的選舉調查、施政滿意度及全國性罷免態度題只留存為資料，不列入準確度排名。</p><p>罷免與一般選舉先各自分榜；罷免需檢驗同意／不同意有效票率誤差、勝負方向及四分之一門檻，避免只憑同意率判斷通過。</p></div></details><details><summary>04　回歸線和政黨比較能說明什麼？</summary><div><p>回歸線描述這批資料中比例化民調與開票之間的線性關係；同場多份民調共享開票結果，點並非獨立，不能把線條或 R² 當成預測準確率。</p><p>公開的政黨或競選總部系列可能受調查時點、問卷與選擇性公布影響；目前無法推論政治背景造成偏差或認定造假。</p></div></details>
       </div></div>
     </section>
   </main>
