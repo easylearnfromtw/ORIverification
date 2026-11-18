@@ -38,7 +38,8 @@
       if (filters.year && String(p.year) !== String(filters.year)) return false;
       if (filters.race && p.race !== filters.race) return false;
       if (filters.kind === 'president' && p.race !== '總統') return false;
-      if (filters.kind === 'local' && (p.race === '總統' || p.kind === 'recall')) return false;
+      if (filters.kind === 'local' && (p.race === '總統' || p.kind === 'recall' || p.kind === 'referendum')) return false;
+      if (filters.kind === 'referendum' && p.kind !== 'referendum') return false;
       if (filters.kind === 'recall' && p.kind !== 'recall') return false;
       return !query || [p.name,p.sponsor,p.executor].some(v => String(v || '').toLocaleLowerCase().includes(query));
     });
