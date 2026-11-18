@@ -8,7 +8,7 @@
   const events = data.events;
   const allInstitutions = logic.summarize(polls);
   const allNames = allInstitutions.map(x => x.name);
-  const state = { expanded: false, institution: 'TVBS' };
+  const state = { institution: 'TVBS' };
   const f2 = n => Number.isFinite(Number(n)) ? Number(n).toFixed(2) : '—';
   const fp = n => Number.isFinite(Number(n)) ? `${Number(n).toFixed(1)}%` : '—';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -49,12 +49,10 @@
     const selected=logic.selectPolls(polls,filters());
     const summaries=logic.summarize(selected);
     const eligible=summaries.filter(s=>s.rating!=='資料不足').length;
-    $('filter-summary').textContent=`目前條件：${selected.length} 份民調、${summaries.length} 個來源系列；${eligible} 個系列達試行分級門檻。`;
-    const visible=state.expanded?summaries:summaries.slice(0,12);
-    $('rank-body').innerHTML=visible.map((s,i)=>`<tr><td class="rank-index">${s.rating==='資料不足'?'—':String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${f2(s.score)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${fp(s.hitRate*100)}</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}">查看 →</button></td></tr>`).join('');
+    $('filter-summary').textContent=`完整顯示 ${summaries.length} 個來源系列（${selected.length} 份民調）；${eligible} 個達評級門檻，${summaries.length - eligible} 個資料不足、不列正式名次。依平均誤差由低至高排列。`;
+    // Every observed source is visible immediately, including those without enough data to grade.
+    $('rank-body').innerHTML=summaries.map((s,i)=>`<tr class="${s.rating==='資料不足'?'rank-unrated':'rank-rated'}"><td class="rank-index">${s.rating==='資料不足'?'—':String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${f2(s.score)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${fp(s.hitRate*100)}</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}" aria-label="查看 ${esc(s.name)} 的逐筆資料">查看 →</button></td></tr>`).join('');
     $('rank-empty').hidden=!!summaries.length;
-    $('show-all').hidden=summaries.length<=12;
-    $('show-all').innerHTML=state.expanded?'收合來源 <span>↑</span>':`顯示其餘 ${Math.max(0,summaries.length-12)} 個來源 <span>↓</span>`;
     if (!summaries.some(s=>s.name===state.institution)) state.institution=summaries[0]?.name || '';
     $('institution-select').innerHTML=summaries.length?opts(summaries.map(s=>s.name),state.institution):'<option value="">沒有符合的資料</option>';
     renderInstitution(summaries.find(s=>s.name===state.institution));
@@ -152,10 +150,9 @@
     const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='ori-poll-records.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
-  for(const id of ['filter-kind','filter-year','filter-race'])$(id).addEventListener('change',()=>{state.expanded=false;renderRankings();});
-  $('source-search').addEventListener('input',()=>{state.expanded=false;renderRankings();});
-  $('reset-filters').addEventListener('click',()=>{for(const id of ['filter-kind','filter-year','filter-race','source-search'])$(id).value='';state.expanded=false;renderRankings();});
-  $('show-all').addEventListener('click',()=>{state.expanded=!state.expanded;renderRankings();});
+  for(const id of ['filter-kind','filter-year','filter-race'])$(id).addEventListener('change',()=>{renderRankings();});
+  $('source-search').addEventListener('input',()=>{renderRankings();});
+  $('reset-filters').addEventListener('click',()=>{for(const id of ['filter-kind','filter-year','filter-race','source-search'])$(id).value='';renderRankings();});
   $('rank-body').addEventListener('click',e=>{const button=e.target.closest('[data-institution]');if(!button)return;state.institution=button.dataset.institution;$('institution-select').value=state.institution;renderInstitution(logic.summarize(logic.selectPolls(polls,filters())).find(x=>x.name===state.institution));$('institution').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});
   $('institution-select').addEventListener('change',()=>{state.institution=$('institution-select').value;renderInstitution(logic.summarize(logic.selectPolls(polls,filters())).find(x=>x.name===state.institution));});
   $('compare-a').addEventListener('change',renderComparison);$('compare-b').addEventListener('change',renderComparison);
