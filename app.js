@@ -158,5 +158,13 @@
   $('compare-a').addEventListener('change',renderComparison);$('compare-b').addEventListener('change',renderComparison);
   $('election-year').addEventListener('change',updateElectionRaces);$('election-race').addEventListener('change',updateElectionPolls);$('election-poll').addEventListener('change',renderElection);
   $('download-csv').addEventListener('click',downloadCsv);
+  function renderRecallCalculator() {
+    const names=['recall-poll-yes','recall-poll-no','recall-vote-yes','recall-vote-no','recall-electors'];
+    if(names.some(id=>$(id).value.trim()==='')) { $('recall-output').textContent='請填寫同一罷免案的全部五項數字。'; return; }
+    const values=names.map(id=>Number($(id).value));
+    const r=logic.evaluateRecall({pollYes:values[0],pollNo:values[1],voteYes:values[2],voteNo:values[3],electors:values[4]});
+    $('recall-output').textContent=r?`民調同意票率（已表態比例化）${f2(r.pollShare)}% ｜實際同意有效票率 ${f2(r.actualShare)}% ｜絕對誤差 ${f2(r.absoluteError)} 個百分點 ｜同意票門檻 ${r.threshold.toLocaleString('zh-TW')} 票 ｜實際結果：${r.passed?'罷免通過':'罷免未通過'}。`:'輸入無效：比例需介於 0–100%，票數須為非負整數，且有效票數不能超過選舉人總數。';
+  }
+  for(const id of ['recall-poll-yes','recall-poll-no','recall-vote-yes','recall-vote-no','recall-electors'])$(id).addEventListener('input',renderRecallCalculator);
   renderRankings();updateElectionRaces();renderParty();
 })();
