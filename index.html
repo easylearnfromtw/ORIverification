@@ -22,7 +22,7 @@
     <section id="rankings" class="section shell">
       <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h1>民調來源<span class="ink-accent">準確度排行榜</span></h1><p>公開本研究已收錄的<strong>全部民調來源系列</strong>，依年度等權平均絕對誤差由低至高排列。每個來源都能查看調查數量、涵蓋年份、評級與原始紀錄；不限定封關或最後一次調查，僅達最低樣本門檻者列正式名次。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
       <div class="filter-block"><div class="filter-heading"><span>篩選資料</span><button id="reset-filters" class="plain-button" type="button">重設篩選</button></div>
-        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
+        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option><option value="recall">罷免投票</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
         <p class="filter-foot" id="filter-summary" aria-live="polite"></p>
       </div>
       <div class="ranking-note"><span class="note-mark">!</span><p><strong>本頁排名僅代表已收錄樣本，不是所有台灣民調的完整歷史排名。</strong> 來源系列可能是媒體、委託者、發布者或調查執行單位；至少 5 份民調、跨 3 個年份者才列正式名次，其餘全部列出但標註「資料不足」。<a href="#methodology">閱讀方法與限制 →</a></p></div>
@@ -75,8 +75,8 @@
     </section>
 
     <section id="expansion" class="section shell expansion-section">
-      <div class="section-top"><div><div class="kicker">07 &nbsp; / &nbsp; SOURCE EXPANSION</div><h2>新增民調資料庫與<span class="ink-accent">罷免驗證</span></h2><p>以下是已確認的研究來源與匯入進度。來源名錄不等於已納入準確度計算；未核對完整數字及正式開票的資料，不會加入排行榜。</p></div></div>
-      <p class="table-caption">以下已建立可核實的原始數據紀錄，與仍待批次蒐集的來源名錄分開管理。</p><div class="archive-panel"><div class="section-top"><div><span class="tiny-label">VERIFIED SOURCE RECORDS</span><h3>鏡新聞 2025 年 7 月罷免調查</h3><p>同一波調查包含六個不同選區，各自保留全體受訪者及「一定會投票」子群組的不同分母。未取得正式逐案票數前，不加入誤差榜。</p></div></div><div id="verified-archive" class="table-scroll"></div></div>
+      <div class="section-top"><div><div class="kicker">07 &nbsp; / &nbsp; SOURCE EXPANSION</div><h2>新增民調資料庫與<span class="ink-accent">罷免驗證</span></h2><p>以下是已確認的研究來源與匯入進度。來源名錄不等於已納入準確度計算；未核對完整數字及正式開票的資料，不會加入排行榜；已核對者與選舉民調一併計算。</p></div></div>
+      <p class="table-caption">以下已建立可核實的原始數據紀錄，與仍待批次蒐集的來源名錄分開管理。</p><div class="archive-panel"><div class="section-top"><div><span class="tiny-label">VERIFIED SOURCE RECORDS</span><h3>鏡新聞 2025 年 7 月罷免調查</h3><p>同一波調查包含六個不同選區，各自保留全體受訪者及「一定會投票」子群組的不同分母。已核對中選會正式開票，六筆均納入同一準確度總榜；也可選「罷免投票」獨立篩選。</p></div></div><div id="verified-archive" class="table-scroll"></div></div>
       <div class="source-grid">
         <article class="source-card"><span class="tiny-label">MEDIA ARCHIVE · 待完整擷取</span><h3>年代民調</h3><p>指定來源：年代調查資料庫。原站本次讀取逾時；保留待核資料，不假設所有頁面已擷取。</p><a href="https://survey.eracom.com.tw/result.jsp" target="_blank" rel="noopener noreferrer">開啟原始資料庫 ↗</a></article>
         <article class="source-card"><span class="tiny-label">MEDIA ARCHIVE · 逐篇查核中</span><h3>鏡新聞政經情勢民調</h3><p>已找到選舉、罷免及一般政策調查專題。只有具備同一選區、同一題目與正式結果者，才能進入誤差評分。</p><a href="https://www.mnews.tw/topic/c7c93a23-29b2-4cb5-8f6f-e19bac2902c8" target="_blank" rel="noopener noreferrer">開啟鏡新聞專題 ↗</a></article>
@@ -91,7 +91,7 @@
         <details open><summary>01　如何計算民調誤差？</summary><div><p>先把納入候選人的原始支持率除以其支持率合計，再把實際得票率除以相同候選人的得票率合計。兩者差距的絕對值，取候選人平均。</p><p class="formula">單份平均絕對差 = 各候選人 |比例化支持率 − 比例化實際票率| 的平均</p><p>這相當於假設未表態者依已表態比例分配；實際選民可能不同，也不等同民調機構自己的得票預估。</p></div></details>
         <details><summary>02　機構分數和五級標籤怎麼來？</summary><div><p>先計算每個年份的民調平均差，再讓有資料的年份等權。至少 5 份民調、跨 3 個年份才評級。門檻是本研究自訂，並非法定或學界通用標準。</p><ul class="grade-list"><li>小於 2：最為準確</li><li>2 至小於 4：時常準確</li><li>4 至小於 6：時有誤差</li><li>6 至小於 8：常有誤差</li><li>8 以上：完全不準確（本樣本級距，非每份均錯）</li></ul></div></details>
         <details><summary>03　資料如何挑選？有哪些缺口？</summary><div><p>不限定封關、最後一次或特定選前天數；同一來源對同一場選舉的不同日期調查，原則上逐筆保留，並依調查完成日及發布日標示。完整資料庫可收錄政策、施政與未開票調查，但只有題目、選區、選項與實際結果可比的資料才計算開票誤差。地方候選人以事後有效票至少 5%、合計至少 90% 為條件，仍有回溯篩選限制。</p><p>1996 年尚未納入選前民調；2009 年以前地方選舉、各機構完整封關調查與部分一手開票仍未補齊。部分資料日期可能是調查完成日或公開日。</p></div></details>
-        <details><summary>05　新增來源、學校與罷免何時進榜？</summary><div><p>先核對調查對象、抽樣方式、調查日期、委託方、實際執行機構、完整選項及正式結果，再去重與計分。未舉行投票的選舉調查、施政滿意度及全國性罷免態度題只留存為資料，不列入準確度排名。</p><p>罷免與一般選舉先各自分榜；罷免需檢驗同意／不同意有效票率誤差、勝負方向及四分之一門檻，避免只憑同意率判斷通過。</p></div></details><details><summary>04　回歸線和政黨比較能說明什麼？</summary><div><p>回歸線描述這批資料中比例化民調與開票之間的線性關係；同場多份民調共享開票結果，點並非獨立，不能把線條或 R² 當成預測準確率。</p><p>公開的政黨或競選總部系列可能受調查時點、問卷與選擇性公布影響；目前無法推論政治背景造成偏差或認定造假。</p></div></details>
+        <details><summary>05　新增來源、學校與罷免何時進榜？</summary><div><p>先核對調查對象、抽樣方式、調查日期、委託方、實際執行機構、完整選項及正式結果，再去重與計分。未舉行投票的選舉調查、施政滿意度及全國性罷免態度題只留存為資料，不列入準確度排名。</p><p>罷免與一般選舉可篩選分開查看，總榜則一併計算；罷免需檢驗同意／不同意有效票率誤差、勝負方向及四分之一門檻，避免只憑同意率判斷通過。</p></div></details><details><summary>04　回歸線和政黨比較能說明什麼？</summary><div><p>回歸線描述這批資料中比例化民調與開票之間的線性關係；同場多份民調共享開票結果，點並非獨立，不能把線條或 R² 當成預測準確率。</p><p>公開的政黨或競選總部系列可能受調查時點、問卷與選擇性公布影響；目前無法推論政治背景造成偏差或認定造假。</p></div></details>
       </div></div>
     </section>
   </main>
