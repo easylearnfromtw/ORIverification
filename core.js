@@ -45,12 +45,18 @@
   function commonRaces(polls, leftName, rightName) {
     if (!leftName || !rightName || leftName === rightName) return [];
     const collect = name => {
-      const result = new Map();
-      for (const p of polls.filter(p => p.name === name)) {
-        const key = `${p.year}|${p.race}`, prev = result.get(key);
-        if (!prev || String(p.end_date || '') > String(prev.end_date || '')) result.set(key,p);
+      const grouped = new Map();
+      for (const p of polls.filter(p => p.name === name && Number.isFinite(p.mae))) {
+        const key = `${p.year}|${p.race}`;
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push(p);
       }
-      return result;
+      return new Map([...grouped].map(([key,entries]) => [key,{
+        year:entries[0].year,race:entries[0].race,
+        mae:average(entries.map(p=>p.mae)),
+        count:entries.length,
+        end_date:entries.map(p=>p.end_date||'').sort().at(-1)
+      }]));
     };
     const left = collect(leftName), right = collect(rightName), result=[];
     for (const [key,poll] of left) if (right.has(key)) result.push({year:poll.year,race:poll.race,left:poll,right:right.get(key)});
