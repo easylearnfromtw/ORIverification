@@ -23,7 +23,7 @@
   // Accuracy is always evaluated against official vote returns, never against another pollster.
   const actualWinner = p => Object.keys(p.actual_norm||{}).sort((a,b)=>p.actual_norm[b]-p.actual_norm[a])[0];
   const predictedWinner = p => Object.keys(p.normalized||{}).sort((a,b)=>p.normalized[b]-p.normalized[a])[0];
-  const directionHit = p => predictedWinner(p)===actualWinner(p);
+  const directionHit = p => logic.outcomeHit(p) === true;
 
   $('hero-mae').innerHTML = `${f2(totalAvg)}<small> pp</small>`;
   $('metric-polls').textContent = polls.length;
@@ -56,10 +56,10 @@
     const summaries=logic.summarize(selected);
     const eligible=summaries.filter(s=>s.rating!=='資料不足').length;
     const rated=summaries.filter(s=>s.rating!=='資料不足');
-    const provisional=summaries.filter(s=>s.rating==='資料不足').slice().sort((a,b)=>a.score-b.score);
-    $('filter-summary').textContent=`完整顯示 ${summaries.length} 個來源系列（${selected.length} 份民調）；${eligible} 個達評級門檻，${summaries.length - eligible} 個資料不足、不列正式名次，但有暫定排序。公投與選舉建議分別篩選比較。`;
+    const provisional=summaries.filter(s=>s.rating==='資料不足').slice().sort((a,b)=>b.score-a.score);
+    $('filter-summary').textContent=`依與實際開票第一名吻合率排名；完整顯示 ${summaries.length} 個來源系列（${selected.length} 份民調）；${eligible} 個達評級門檻，${summaries.length - eligible} 個資料不足、不列正式名次，但有暫定排序。公投與選舉建議分別篩選比較。`;
     // Every observed source is visible immediately, including those without enough data to grade.
-    $('rank-body').innerHTML=[...rated,...provisional].map((s,i)=>`<tr class="${s.rating==='資料不足'?'rank-unrated':'rank-rated'}"><td class="rank-index">${s.rating==='資料不足'?'暫'+String(i-rated.length+1):String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${f2(s.score)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${fp(s.hitRate*100)}</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}" aria-label="查看 ${esc(s.name)} 的逐筆資料">查看 →</button></td></tr>`).join('');
+    $('rank-body').innerHTML=[...rated,...provisional].map((s,i)=>`<tr class="${s.rating==='資料不足'?'rank-unrated':'rank-rated'}"><td class="rank-index">${s.rating==='資料不足'?'暫'+String(i-rated.length+1):String(i+1).padStart(2,'0')}</td><td><span class="source-name">${esc(s.name)}</span></td><td><span class="score-num">${fp(s.score*100)}</span></td><td>${s.n} 份 <span class="muted">/ ${s.years} 年</span></td><td>${f2(s.diagnosticMae)} pp</td><td><span class="pill ${badge(s.rating)}">${esc(s.rating)}</span></td><td><button class="row-link" type="button" data-institution="${esc(s.name)}" aria-label="查看 ${esc(s.name)} 的逐筆資料">查看 →</button></td></tr>`).join('');
     $('rank-empty').hidden=!!summaries.length;
     if (!summaries.some(s=>s.name===state.institution)) state.institution=summaries[0]?.name || '';
     $('institution-select').innerHTML=summaries.length?opts(summaries.map(s=>s.name),state.institution):'<option value="">沒有符合的資料</option>';
