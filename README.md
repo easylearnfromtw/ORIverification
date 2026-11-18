@@ -64,3 +64,10 @@
 - 新北原始報導：https://www.mnews.tw/story/20250701nm001 、https://www.mnews.tw/story/20250701nm010 、https://www.mnews.tw/story/20250701nm011 ；桃園：https://www.mnews.tw/story/20250708nm009 ；臺中：https://www.mnews.tw/story/20250714nm001 。
 - 7/26 票數比對：https://hakkanews.tw/2025/07/26/214972/ ；8/23 票數比對：https://election.ltn.com.tw/recall2025/ 。羅明才案的不同新聞開票票數存在差異，需再次對中選會原始公告；已在單筆註記。
 - 網站新增鏡新聞快捷篩選，資料表改為從 data.js 動態顯示全部 18 筆，而不是硬編碼六筆。正式名次跨 3 年門檻仍適用；無正式名次不代表未計算誤差。
+
+## 民調機構收錄稽核（2026-11-18）
+
+- 新增 `data.institution_registry`：36 個主要媒體、民調執行機構、學術與智庫的盤點表；依 `name`（來源／發布者）、`sponsor`（委託方）、`executor`（執行方）分別計算已收錄關聯數。這是初步名稱比對，不是所有歷史資料均已收齊的保證。
+- 網站新增 `#coverage` 來源稽核專區。每個機構標示已收錄部分數據或尚無可比資料，所有機構的完整性 `complete=false`。
+- 角色實例：美麗島電子報 2025 年 7 月委託畢肯市場研究執行，2026 年 10 月委託趨勢民意調查執行；鏡新聞 2025 年 2 月委託大地民意研究執行。來源：https://news.tvbs.com.tw/politics/2947524 、https://my-formosa.com.tw/DOC_230543.htm 、https://tw.news.yahoo.com/%E6%B0%91%E8%AA%BF-46-4-%E6%B0%91%E7%9C%BE%E8%B4%8A%E5%90%8C%E5%A4%A7%E7%BD%B7%E5%85%8D-%E7%95%A5%E9%AB%98%E6%96%BC%E4%B8%8D%E8%B4%8A%E5%90%8C44-022100320.html 。
+- 不可因發布者與委託者相同，就假設其為實際調查執行方。後續應按每一份報告逐筆補充角色與原始證據，並提供依發布者／委託者／執行者切換的獨立排行榜。
