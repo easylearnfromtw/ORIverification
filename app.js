@@ -101,7 +101,7 @@
     $('institution-sub').textContent=`${summary.n} 份民調 · ${summary.years} 個選舉年份 · 第一名一致 ${fp(summary.hitRate*100)}`;
     $('institution-score').textContent=f2(summary.score);
     $('institution-grade').textContent=summary.rating;
-    $('institution-grade-note').textContent=summary.rating==='資料不足'?'未達 5 份且跨 3 年的正式評級門檻；暫定排序僅供探索':'僅依目前樣本自訂';
+    $('institution-grade-note').textContent=summary.rating==='資料不足'?'少於 4 份民調的正式評級門檻；暫定排序僅供探索':'僅依目前樣本自訂';
     $('scatter').innerHTML=scatterPlot(entries);
     $('year-bars').innerHTML=yearBars(entries);
     $('record-count').textContent=`${entries.length} 份民調`;
