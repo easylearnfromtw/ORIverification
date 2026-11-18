@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="以可追溯的選前民調及實際開票資料，探索不同來源系列的誤差。">
+  <meta name="description" content="台灣選舉民調準確度排行榜：公開全部已收錄民調來源的誤差分數、樣本數、評級、逐筆選舉與資料來源。">
   <meta name="theme-color" content="#f7f6f2">
-  <title>民調，準確嗎？｜ORI Verification</title>
+  <title>民調準確度排行榜｜ORI Verification</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="data.js"></script>
   <script defer src="core.js"></script>
@@ -19,9 +19,21 @@
     <button class="header-download" id="download-csv" type="button">下載資料 <span>↗</span></button>
   </header>
   <main id="top">
+    <section id="rankings" class="section shell">
+      <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h1>民調來源<span class="ink-accent">準確度排行榜</span></h1><p>公開本研究已收錄的<strong>全部民調來源系列</strong>，依年度等權平均絕對誤差由低至高排列。每個來源都能查看調查數量、涵蓋年份、評級與原始紀錄；僅達最低樣本門檻者列正式名次。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
+      <div class="filter-block"><div class="filter-heading"><span>篩選資料</span><button id="reset-filters" class="plain-button" type="button">重設篩選</button></div>
+        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
+        <p class="filter-foot" id="filter-summary" aria-live="polite"></p>
+      </div>
+      <div class="ranking-note"><span class="note-mark">!</span><p><strong>本頁排名僅代表已收錄樣本，不是所有台灣民調的完整歷史排名。</strong> 來源系列可能是媒體、委託者、發布者或調查執行單位；至少 5 份民調、跨 3 個年份者才列正式名次，其餘全部列出但標註「資料不足」。<a href="#methodology">閱讀方法與限制 →</a></p></div>
+      <div class="table-scroll"><table class="data-table rankings-table"><thead><tr><th scope="col">名次</th><th scope="col">來源系列／機構</th><th scope="col">年度等權平均差 <span class="subhead">百分點 ↓</span></th><th scope="col">樣本 <span class="subhead">份數／年份</span></th><th scope="col">第一名一致</th><th scope="col">暫定級距</th><th scope="col"><span class="sr-only">查看</span></th></tr></thead><tbody id="rank-body"></tbody></table></div>
+      <div id="rank-empty" class="empty-state" hidden>目前條件沒有符合的資料，請嘗試調整篩選。</div>
+      <p class="table-caption">所有已收錄來源均在此顯示。正式名次以有限樣本計算，分數低不保證未來民調較準；不同年份、選區與調查日期也可能影響可比性。自訂級距中的「完全不準確」僅表示本樣本平均差達 8 個百分點，不代表每份民調都錯，更不能據此推論調查機構有刻意偏誤。</p>
+    </section>
+
     <section class="hero shell" aria-labelledby="hero-title">
       <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-dot"></span> ORI POLLING STUDY <span class="edition-line"></span> 研究初版</div>
-        <h1 id="hero-title">民調，<br><em>準確嗎？</em></h1>
+        <h2 id="hero-title">民調，<br><em>準確嗎？</em></h2>
         <p>從選前支持度到實際開票，我們把每一次差距攤開來看。比較民調來源、選區與年份，也看見數字背後的不確定性。</p>
         <div class="hero-actions"><a class="button primary" href="#rankings">探索機構準確度 <span>↗</span></a><a class="text-link" href="#methodology">了解研究方法 <span>↓</span></a></div>
         <div class="hero-foot"><span>台灣選舉民調與開票比較</span><span>2000—2024 可比樣本</span></div>
@@ -34,18 +46,6 @@
 
     <div class="shell note-strip"><span class="note-symbol">i</span><p><strong>先看研究邊界。</strong> 這是探索性資料集，並非 1950 年以來所有民調。多數地方開票為二手轉錄，部分發布日期、委託與執行關係仍待核實。<a href="#methodology">閱讀限制 →</a></p></div>
     <section class="shell metrics" aria-label="研究數據摘要"><div><span>納入民調</span><strong id="metric-polls">—</strong><small>份已收錄調查</small></div><div><span>比較場次</span><strong id="metric-races">—</strong><small>場具有可比民調</small></div><div><span>來源系列</span><strong id="metric-institutions">—</strong><small>個來源列示名稱</small></div><div><span>第一名一致</span><strong id="metric-hit">—</strong><small>僅為本樣本比例</small></div></section>
-
-    <section id="rankings" class="section shell">
-      <div class="section-top"><div><div class="kicker">01 &nbsp; / &nbsp; ACCURACY INDEX</div><h2>誰的民調<span class="ink-accent">較接近結果？</span></h2><p>依來源系列檢視誤差、樣本數及年份。數值越小，代表此樣本中與開票差距越小。</p></div><a class="section-jump" href="#methodology">計算方式 <span>↗</span></a></div>
-      <div class="filter-block"><div class="filter-heading"><span>篩選資料</span><button id="reset-filters" class="plain-button" type="button">重設篩選</button></div>
-        <div class="filters"><label class="search-label"><span>搜尋來源</span><input id="source-search" type="search" placeholder="例如：TVBS、聯合報" autocomplete="off"></label><label><span>選舉類型</span><select id="filter-kind"><option value="">全部類型</option><option value="president">總統選舉</option><option value="local">地方首長選舉</option></select></label><label><span>選舉年份</span><select id="filter-year"><option value="">全部年份</option></select></label><label><span>選區</span><select id="filter-race"><option value="">全部選區</option></select></label></div>
-        <p class="filter-foot" id="filter-summary" aria-live="polite"></p>
-      </div>
-      <div class="ranking-note"><span class="note-mark">!</span><p><strong>這不是完整歷史排名。</strong> 組織涵蓋的選區與年代不同；各系列需至少 5 份民調、跨 3 個年份才套用自訂級距。篩選後資料不足時不評級。</p></div>
-      <div class="table-scroll"><table class="data-table rankings-table"><thead><tr><th scope="col">序</th><th scope="col">來源系列</th><th scope="col">年度等權平均差 <span class="subhead">百分點 ↓</span></th><th scope="col">樣本 <span class="subhead">份數／年份</span></th><th scope="col">第一名一致</th><th scope="col">暫定級距</th><th scope="col"><span class="sr-only">查看</span></th></tr></thead><tbody id="rank-body"></tbody></table></div>
-      <div id="rank-empty" class="empty-state" hidden>目前條件沒有符合的資料，請嘗試調整篩選。</div><button id="show-all" class="button outline show-all" type="button">顯示更多來源 <span>↓</span></button>
-      <p class="table-caption">來源系列名稱可能是委託者、發布者或執行者，不一定是實際執行機構。自訂級距中的「完全不準確」僅代表本樣本平均差達 8 個百分點，並非每份民調都錯。</p>
-    </section>
 
     <section id="institution" class="section shell detail-section">
       <div class="section-top"><div><div class="kicker">02 &nbsp; / &nbsp; INSTITUTION VIEW</div><h2>把每一筆<span class="ink-accent">資料攤開來看</span></h2><p>選擇來源系列，查看其樣本範圍、比例化誤差與逐筆來源。</p></div><label class="compact-select"><span>民調來源</span><select id="institution-select" aria-label="選擇民調來源"></select></label></div>
