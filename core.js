@@ -28,7 +28,7 @@
     if (/^(趨勢|趨勢民意調查|趨勢民意調查股份有限公司)$/.test(s)) return '趨勢民意調查';
     return s;
   }
-  function summarize(polls) {
+  // MAE measures percentage-point distance from actual election returns, not agreement with other polls.\n  function summarize(polls) {
     const groups = new Map();
     for (const poll of polls) {
       if (!Number.isFinite(poll.mae)) continue;
