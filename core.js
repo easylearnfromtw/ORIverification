@@ -28,7 +28,26 @@
     if (/^(趨勢|趨勢民意調查|趨勢民意調查股份有限公司)$/.test(s)) return '趨勢民意調查';
     return s;
   }
-  // MAE measures percentage-point distance from actual election returns, not agreement with other polls.\n  function summarize(polls) {
+  // Rank by predicted winner versus actual winner; percentage error remains diagnostic only.
+  function outcomeHit(p) {
+    const predicted=p.kind==='recall'&&Number.isFinite(p.recall?.likely_yes)&&Number.isFinite(p.recall?.likely_no)?{'同意罷免':p.recall.likely_yes,'不同意罷免':p.recall.likely_no}:p.normalized;
+    const actual=p.actual_norm;
+    if(!predicted||!actual)return null;
+    const names=Object.keys(predicted).filter(n=>Number.isFinite(predicted[n])&&Number.isFinite(actual[n]));
+    if(names.length<2)return null;
+    const max=values=>Math.max(...names.map(n=>values[n]));
+    if(names.filter(n=>predicted[n]===max(predicted)).length!==1||names.filter(n=>actual[n]===max(actual)).length!==1)return null;
+    return names.find(n=>predicted[n]===max(predicted))===names.find(n=>actual[n]===max(actual));
+  }
+  function outcomeGrade(rate,count) {
+    if(!Number.isFinite(rate)||count<4)return '資料不足';
+    if(rate>=.9)return '最為準確';
+    if(rate>=.75)return '時常準確';
+    if(rate>=.55)return '時有誤差';
+    if(rate>=.35)return '常有誤差';
+    return '完全不準確';
+  }
+  function summarize(polls) {
     const groups = new Map();
     for (const poll of polls) {
       if (!Number.isFinite(poll.mae)) continue;
@@ -42,11 +61,12 @@
         if (!byYear.has(poll.year)) byYear.set(poll.year, []);
         byYear.get(poll.year).push(poll.mae);
       }
-      const score = average([...byYear.values()].map(average));
+      const evaluated=entries.map(outcomeHit).filter(x=>x!==null);
+      const score=evaluated.length?evaluated.filter(Boolean).length/evaluated.length:NaN;
       return { name, n: entries.length, years: byYear.size, score,
-        hitRate: entries.filter(p => p.winner_hit).length / entries.length,
-        rating: grade(score, entries.length, byYear.size), polls: entries };
-    }).sort((a,b) => (a.rating === '資料不足') - (b.rating === '資料不足') || a.score - b.score || a.name.localeCompare(b.name,'zh-Hant'));
+        hitRate:score, evaluated:evaluated.length, diagnosticMae:average([...byYear.values()].map(average)),
+        rating: outcomeGrade(score, evaluated.length), polls: entries };
+    }).sort((a,b) => (a.rating === '資料不足') - (b.rating === '資料不足') || b.score - a.score || a.name.localeCompare(b.name,'zh-Hant'));
   }
   function selectPolls(polls, filters = {}) {
     const query = (filters.query || '').trim().toLocaleLowerCase();
@@ -71,7 +91,7 @@
       }
       return new Map([...grouped].map(([key,entries]) => [key,{
         year:entries[0].year,race:entries[0].race,
-        mae:average(entries.map(p=>p.mae)),
+        mae:average(entries.map(p=>p.mae)), hitRate:entries.map(outcomeHit).filter(x=>x!==null).filter(Boolean).length / (entries.map(outcomeHit).filter(x=>x!==null).length||1),
         count:entries.length,
         end_date:entries.map(p=>p.end_date||'').sort().at(-1)
       }]));
@@ -99,7 +119,7 @@
     const threshold=Math.ceil(electors/4),passed=voteYes>voteNo&&voteYes>=threshold;
     return {pollShare,actualShare,absoluteError:Math.abs(pollShare-actualShare),signedError:pollShare-actualShare,threshold,passed,pollMajorityYes:pollYes>pollNo,actualMajorityYes:voteYes>voteNo};
   }
-  const api = {normalize,grade,canonicalBrand,summarize,selectPolls,commonRaces,regression,evaluateRecall};
+  const api = {normalize,grade,outcomeHit,outcomeGrade,canonicalBrand,summarize,selectPolls,commonRaces,regression,evaluateRecall};
   if (typeof module !== 'undefined') module.exports = api;
   root.ORILogic = api;
 })(typeof globalThis === 'undefined' ? this : globalThis);
