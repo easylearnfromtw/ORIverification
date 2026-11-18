@@ -53,3 +53,17 @@
   #rankings + .hero{margin-top:37px}
   .hero h2{font-size:58px;margin:20px 0}
 }
+
+.expansion-section{border-top:1px solid var(--line-dark);margin-top:40px}
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.source-card,.recall-panel{border:1px solid var(--line);background:#fff;padding:23px}
+.source-card h3,.recall-panel h3{font-family:var(--serif);font-size:22px;margin:12px 0}
+.source-card p,.recall-panel p{font-size:12px;line-height:1.85;color:var(--sub)}
+.source-card a,.recall-panel a{font-size:12px;color:var(--violet);text-decoration:underline;text-underline-offset:3px}
+.recall-panel{margin-top:22px}
+.recall-inputs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:19px}
+.recall-inputs label{font-size:10px;color:var(--sub);font-weight:700;display:flex;flex-direction:column;gap:7px}
+.recall-inputs input{min-width:0}
+.recall-output{padding:15px;background:var(--cream);color:var(--ink)!important;font-weight:600}
+@media(max-width:900px){.recall-inputs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.source-grid{grid-template-columns:1fr}.recall-inputs{grid-template-columns:1fr 1fr}.recall-inputs label:last-child{grid-column:span 2}}
