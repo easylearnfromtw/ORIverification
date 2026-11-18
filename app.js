@@ -6,6 +6,7 @@
   const $ = id => document.getElementById(id);
   const polls = data.polls;
   const events = data.events;
+  if(document.getElementById('coverage-body')) document.getElementById('coverage-body').innerHTML=(data.institution_registry||[]).map(x=>'<tr><td><strong>'+String(x.name).replace(/&/g,'&amp;')+'</strong></td><td>'+x.type+'</td><td>'+x.records+'</td><td>'+x.roleCounts.publisher+'</td><td>'+x.roleCounts.sponsor+'</td><td>'+x.roleCounts.executor+'</td><td>'+x.status+'／未確認全量</td></tr>').join('');
   const verifiedArchive = polls.filter(p=>p.kind==='recall'&&p.name==='鏡新聞').map(p=>({target:p.recall.target,race:p.race.replace(/^罷免｜/,''),yes:p.support['同意罷免'],no:p.support['不同意罷免'],likelyYes:p.recall.likely_yes,likelyNo:p.recall.likely_no,sample:p.sample,source_url:p.source_url,mae:p.mae}));
   const allInstitutions = logic.summarize(polls);
   const allNames = allInstitutions.map(x => x.name);
