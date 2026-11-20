@@ -32,16 +32,24 @@ const fallbackMap='<svg viewBox="0 0 375 525" style="display:block;width:100%;ma
 root.classList.add('sw-map-frame');
 let mapZoom=1;
 let mapContent=null;
-function setZoom(v){mapZoom=Math.max(1,Math.min(2.5,v));if(mapContent)mapContent.setAttribute('transform','translate('+((1-mapZoom)*220)+' '+((1-mapZoom)*285)+') scale('+mapZoom+')');}
+function setZoom(v){mapZoom=Math.max(1,Math.min(2.5,v));if(mapContent)mapContent.setAttribute('transform','translate('+((1-mapZoom)*245)+' '+((1-mapZoom)*280)+') scale('+mapZoom+')');}
 document.getElementById('sw-zoom-in')?.addEventListener('click',()=>setZoom(mapZoom+.25));
 document.getElementById('sw-zoom-out')?.addEventListener('click',()=>setZoom(mapZoom-.25));
 document.getElementById('sw-reset')?.addEventListener('click',()=>setZoom(1));
-function point(lon,lat){return [(lon-118.1)*66,(26.6-lat)*67];}
-function geoPath(geom){
- const pieces=[];
+const countyCodes={'63000':'臺北市','65000':'新北市','68000':'桃園市','66000':'臺中市','67000':'臺南市','64000':'高雄市','10017':'基隆市','10018':'新竹市','10020':'嘉義市','10004':'新竹縣','10005':'苗栗縣','10007':'彰化縣','10008':'南投縣','10009':'雲林縣','10010':'嘉義縣','10013':'屏東縣','10002':'宜蘭縣','10015':'花蓮縣','10014':'臺東縣','10016':'澎湖縣','09020':'金門縣','09007':'連江縣'};
+function countyName(f){
+ const p=f.properties||{};
+ const raw=String(p.COUNTYNAME||p.COUNTY_NAME||p.name||p.NAME||p.county||p.COUNTY||'').replace(/台/g,'臺').replace(/巿/g,'市');
+ const code=String(p.COUNTYCODE||p.COUNTYID||p.code||p.id||f.id||'').padStart(5,'0');
+ return counties.some(x=>x[0]===raw)?raw:countyCodes[code]||'';
+}
+function coords(geom){const polys=geom.type==='Polygon'?[geom.coordinates]:geom.type==='MultiPolygon'?geom.coordinates:[];return polys.flat(2).filter(p=>Array.isArray(p)&&typeof p[0]==='number');}
+function geoPath(geom,project){
  const polys=geom.type==='Polygon'?[geom.coordinates]:geom.type==='MultiPolygon'?geom.coordinates:[];
- for(const poly of polys)for(const ring of poly){if(ring.length<3)continue;const stride=Math.max(1,Math.floor(ring.length/700));const sampled=ring.filter((_,i)=>i%stride===0);if(sampled.length<3)continue;pieces.push(sampled.map((p,i)=>{const xy=point(p[0],p[1]);return(i?'L':'M')+xy[0].toFixed(1)+','+xy[1].toFixed(1)}).join('')+'Z');}
- return pieces.join(' ');
+ return polys.map(poly=>poly.map(ring=>{
+ const stride=Math.max(1,Math.floor(ring.length/950));
+ return ring.filter((_,i)=>i%stride===0).map((p,i)=>{const xy=project(p);return(i?'L':'M')+xy[0].toFixed(1)+','+xy[1].toFixed(1)}).join('')+'Z';
+ }).join('')).join('');
 }
 function mapColor(name){const e=official(name);if(!e)return '#e9e5df';const top=e.results.slice().sort((a,b)=>b.percent-a.percent)[0];return parties[top.party]||'#a58a6b';}
 async function drawRealMap(){
@@ -53,9 +61,22 @@ async function drawRealMap(){
   const obj=topo.objects.map||topo.objects.counties||Object.values(topo.objects)[0];
   const features=window.topojson.feature(topo,obj).features;
   if(features.length!==22)throw Error('county count mismatch');
-  const shapes=features.map(f=>{const name=String(f.properties.COUNTYNAME||f.properties.name||f.properties.NAME||f.properties.county||'').replace(/台/g,'臺');if(!counties.some(x=>x[0]===name))return '';return '<path class="sw-county" data-county="'+safe(name)+'" role="button" tabindex="0" aria-label="查看'+safe(name)+'" d="'+geoPath(f.geometry)+'" fill="'+mapColor(name)+'" fill-opacity=".73" stroke="#f7f5f1" stroke-width="1.4" vector-effect="non-scaling-stroke"/>';}).join('');
+  const mainland=features.filter(f=>!['澎湖縣','金門縣','連江縣'].includes(countyName(f)));
+  const allPoints=mainland.flatMap(f=>coords(f.geometry)).filter(p=>p[0]>119.5&&p[0]<122.3&&p[1]>21.7&&p[1]<25.6);
+  const bounds={minX:Math.min(...allPoints.map(p=>p[0])),maxX:Math.max(...allPoints.map(p=>p[0])),minY:Math.min(...allPoints.map(p=>p[1])),maxY:Math.max(...allPoints.map(p=>p[1]))};
+  const scale=Math.min(420/(bounds.maxX-bounds.minX),510/(bounds.maxY-bounds.minY));
+  const project=p=>[245+(p[0]-(bounds.minX+bounds.maxX)/2)*scale,280-((p[1]-(bounds.minY+bounds.maxY)/2)*scale)];
+  const insets={'澎湖縣':[62,340],'金門縣':[61,410],'連江縣':[65,245]};
+  const shapes=features.map(f=>{
+   const name=countyName(f);if(!name)return '';
+   const island=insets[name];
+   const pts=coords(f.geometry);
+   const center=island&&pts.length?[pts.reduce((s,p)=>s+p[0],0)/pts.length,pts.reduce((s,p)=>s+p[1],0)/pts.length]:null;
+   const projector=island?(p=>[island[0]+(p[0]-center[0])*75,island[1]-(p[1]-center[1])*75]):project;
+   return '<path class="sw-county" data-county="'+safe(name)+'" role="button" tabindex="0" aria-label="查看'+safe(name)+'" d="'+geoPath(f.geometry,projector)+'" fill="'+mapColor(name)+'" fill-opacity=".86" stroke="#ffffff" stroke-width="1.1" vector-effect="non-scaling-stroke"/>';
+  }).join('');
   if(shapes.match(/class="sw-county"/g)?.length!==22)throw Error('county names mismatch');
-  root.innerHTML='<svg viewBox="0 0 570 560" aria-label="台灣22縣市行政區互動地圖" role="img"><text x="25" y="32" class="sw-map-title">SIGNWELL / ELECTORAL ATLAS</text><g id="sw-map-content">'+shapes+'</g><text x="25" y="536" font-size="11" fill="#817a74">2022 HISTORICAL BASELINE · NOT 2026 FORECAST</text></svg>';
+  root.innerHTML='<svg viewBox="0 0 490 560" aria-label="台灣22縣市行政區互動地圖" role="img"><text x="25" y="32" class="sw-map-title">SIGNWELL / ELECTORAL ATLAS</text><g id="sw-map-content">'+shapes+'</g><text x="25" y="536" font-size="11" fill="#817a74">2022 HISTORICAL BASELINE · NOT 2026 FORECAST</text></svg>';
   mapContent=root.querySelector('#sw-map-content');setZoom(1);select(activeCounty.name);
  }catch(e){root.innerHTML=fallbackMap;select(activeCounty.name);}
 }
