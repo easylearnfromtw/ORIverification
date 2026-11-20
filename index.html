@@ -6,7 +6,7 @@
   <meta name="description" content="台灣選舉民調準確度排行榜：公開全部已收錄民調來源的誤差分數、樣本數、評級、逐筆選舉與資料來源。">
   <meta name="theme-color" content="#f7f6f2">
   <title>民調準確度排行榜｜ORI Verification</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css"><style>.signwell-layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(270px,1fr);gap:24px;margin-top:24px}.signwell-import{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:20px;padding:14px 0;border-top:1px solid #d8d4cb;border-bottom:1px solid #d8d4cb}.signwell-import p{flex-basis:100%;margin:0}.signwell-import input{max-width:100%}@media(max-width:740px){.signwell-layout{grid-template-columns:minmax(0,1fr)}.signwell-layout .graph-card{min-width:0}}</style>
   <script defer src="data.js"></script>
   <script defer src="core.js"></script>
   <script defer src="app.js"></script>
@@ -23,7 +23,7 @@
     <section id="signwell-forecast" class="section shell" aria-labelledby="signwell-title" style="padding-top:42px">
       <div class="section-top"><div><div class="kicker">SIGNWELL / TAIWAN ELECTION MODEL · BETA</div><h1 id="signwell-title">欣緯民調 <span class="ink-accent">全臺選情地圖</span></h1><p>22 縣市互動探索：歷史開票基準、民調機構歷史方向命中率，以及待蒐集的當期選情。<strong>本頁沒有進行獨立抽樣調查，不是實際發布的民調。</strong></p></div></div>
       <div class="ranking-note"><span class="note-mark">!</span><p><strong>2026 縣市長選舉預估尚未發布。</strong> 目前資料庫沒有可核實的 2026 各縣市同場候選人支持率；下方先展示 2022 官方開票歷史基準。不得將 2022 得票率當成 2026 預測或現任候選人支持率。</p></div>
-      <div class="signwell-layout" style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(270px,1fr);gap:24px;margin-top:24px">
+      <div class="signwell-import"><label for="signwell-file"><strong>匯入自己的當期民調 CSV（僅在此瀏覽器記憶體計算，不上傳）</strong></label><input id="signwell-file" type="file" accept=".csv,text/csv"><a id="signwell-template" download="signwell-template.csv" href="data:text/csv;charset=utf-8,%EF%BB%BFcounty%2Cbrand%2Ccandidate%2Csupport%2Csource_url%2Cend_date%0A">下載 CSV 欄位範本 ↗</a><p id="signwell-import-status" class="muted" aria-live="polite">欄位：county, brand, candidate, support, source_url, end_date。每位候選人各一列，同一來源、縣市與日期構成一份民調。</p></div><div class="signwell-layout">
         <div style="min-width:0"><div class="tiny-label">TAIWAN · 22 MUNICIPALITIES & COUNTIES</div><div id="signwell-map" role="group" aria-label="台灣縣市互動示意地圖" style="margin-top:12px"></div><p class="table-caption">互動位置為示意地理配置，不代表精確行政邊界；點選縣市查看數據。</p></div>
         <div class="graph-card" style="padding:22px"><span class="tiny-label">COUNTY EXPLORER</span><h2 id="signwell-county">選擇縣市</h2><p id="signwell-status" class="muted">點選地圖上的縣市。</p><div id="signwell-results"></div><div id="signwell-method" class="table-caption"></div></div>
       </div>
