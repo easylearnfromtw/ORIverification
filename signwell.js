@@ -46,14 +46,14 @@ if(fileInput)fileInput.addEventListener('change',async()=>{
  const file=fileInput.files&&fileInput.files[0];if(!file)return;
  if(file.size>1024*1024){importStatus.textContent='檔案超過 1MB，請拆分後重試。';return;}
  try{
-  const raw=(await file.text()).replace(/^\\uFEFF/,'').trim();
-  const lines=raw.split(/\\r?\\n/).filter(Boolean).map(line=>line.split(',').map(s=>s.trim().replace(/^"|"$/g,'')));
+  const raw=(await file.text()).replace(/^\uFEFF/,'').trim();
+  const lines=raw.split(/\r?\n/).filter(Boolean).map(line=>line.split(',').map(s=>s.trim().replace(/^"|"$/g,'')));
   const header=lines.shift();const cols=['county','brand','candidate','support','source_url','end_date'];
   if(cols.some(k=>!header.includes(k)))throw Error('缺少必要欄位：'+cols.filter(k=>!header.includes(k)).join('、'));
   const rows=lines.map(row=>Object.fromEntries(header.map((k,i)=>[k,row[i]||''])));
   if(rows.length>500)throw Error('最多匯入 500 列');
   const groups=new Map();
-  for(const row of rows){const v=Number(row.support);if(!counties.some(x=>x[0].replace(/臺/g,'台')===row.county.replace(/臺/g,'台'))||!row.brand||!row.candidate||!Number.isFinite(v)||v<0||v>100||!/^https:\\/\\//.test(row.source_url)||!/^2026-\\d{2}-\\d{2}$/.test(row.end_date))throw Error('縣市、支持率、日期或來源網址格式不正確');
+  for(const row of rows){const v=Number(row.support);if(!counties.some(x=>x[0].replace(/臺/g,'台')===row.county.replace(/臺/g,'台'))||!row.brand||!row.candidate||!Number.isFinite(v)||v<0||v>100||!/^https:\/\//.test(row.source_url)||!/^2026-\d{2}-\d{2}$/.test(row.end_date))throw Error('縣市、支持率、日期或來源網址格式不正確');
    const key=[row.county,row.brand,row.end_date].join('|');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(row);
   }
   const imported=[];
