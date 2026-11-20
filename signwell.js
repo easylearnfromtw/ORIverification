@@ -9,7 +9,9 @@ const parties={'國民黨':'#4269a0','民進黨':'#399477','民眾黨':'#48aab0'
 const baseline=new Map(d.events.filter(e=>e.year===2022).map(e=>[e.race.replace(/臺/g,'台'),e]));
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const official=county=>baseline.get(county.replace(/臺/g,'台'));
-const validPolls=county=>d.polls.filter(p=>p.year===2026&&p.kind!=='recall'&&p.kind!=='referendum'&&p.race.replace(/臺/g,'台')===county.replace(/臺/g,'台')&&p.source_url&&p.normalized&&Object.keys(p.normalized).length>=2);
+let localPolls=[];
+const activeCounty={name:'臺北市'};
+const validPolls=county=>[...d.polls,...localPolls].filter(p=>p.year===2026&&p.kind!=='recall'&&p.kind!=='referendum'&&p.race.replace(/臺/g,'台')===county.replace(/臺/g,'台')&&p.source_url&&p.normalized&&Object.keys(p.normalized).length>=2);
 function estimate(county){
  const entries=validPolls(county);
  const groups=new Map();
@@ -29,6 +31,7 @@ function estimate(county){
 root.innerHTML='<svg viewBox="0 0 375 525" style="display:block;width:100%;max-width:540px;margin:auto" role="img" aria-label="台灣縣市位置互動示意"><path d="M252 42 Q304 71 313 141 Q326 217 302 290 Q299 354 263 419 Q253 464 235 492 Q214 476 198 442 Q167 413 159 365 Q146 318 154 263 Q163 221 188 178 Q203 126 231 85 Z" fill="#ece9e2" stroke="#c9c3b7" stroke-width="2"/>'+counties.map(([name,x,y])=>'<g class="sw-point" data-county="'+safe(name)+'" tabindex="0" role="button" aria-label="查看'+safe(name)+'" style="cursor:pointer"><circle cx="'+x+'" cy="'+y+'" r="14" fill="#fff" stroke="#74628b" stroke-width="1.5"/><circle cx="'+x+'" cy="'+y+'" r="5" fill="#74628b"/><text x="'+x+'" y="'+(y-19)+'" font-size="11" text-anchor="middle" fill="currentColor" font-weight="600">'+safe(name.replace('臺','台'))+'</text></g>').join('')+'</svg>';
 const title=document.getElementById('signwell-county'),status=document.getElementById('signwell-status'),results=document.getElementById('signwell-results'),method=document.getElementById('signwell-method');
 function select(name){
+ activeCounty.name=name;
  title.textContent=name.replace('臺','台');
  root.querySelectorAll('[data-county]').forEach(el=>{const active=el.dataset.county===name;el.querySelector('circle').setAttribute('stroke-width',active?'4':'1.5');});
  const model=estimate(name),base=official(name);
@@ -37,5 +40,28 @@ function select(name){
 }
 root.addEventListener('click',e=>{const el=e.target.closest('[data-county]');if(el)select(el.dataset.county)});
 root.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const el=e.target.closest('[data-county]');if(el){e.preventDefault();select(el.dataset.county)}}});
+const fileInput=document.getElementById('signwell-file');
+const importStatus=document.getElementById('signwell-import-status');
+if(fileInput)fileInput.addEventListener('change',async()=>{
+ const file=fileInput.files&&fileInput.files[0];if(!file)return;
+ if(file.size>1024*1024){importStatus.textContent='檔案超過 1MB，請拆分後重試。';return;}
+ try{
+  const raw=(await file.text()).replace(/^\\uFEFF/,'').trim();
+  const lines=raw.split(/\\r?\\n/).filter(Boolean).map(line=>line.split(',').map(s=>s.trim().replace(/^"|"$/g,'')));
+  const header=lines.shift();const cols=['county','brand','candidate','support','source_url','end_date'];
+  if(cols.some(k=>!header.includes(k)))throw Error('缺少必要欄位：'+cols.filter(k=>!header.includes(k)).join('、'));
+  const rows=lines.map(row=>Object.fromEntries(header.map((k,i)=>[k,row[i]||''])));
+  if(rows.length>500)throw Error('最多匯入 500 列');
+  const groups=new Map();
+  for(const row of rows){const v=Number(row.support);if(!counties.some(x=>x[0].replace(/臺/g,'台')===row.county.replace(/臺/g,'台'))||!row.brand||!row.candidate||!Number.isFinite(v)||v<0||v>100||!/^https:\\/\\//.test(row.source_url)||!/^2026-\\d{2}-\\d{2}$/.test(row.end_date))throw Error('縣市、支持率、日期或來源網址格式不正確');
+   const key=[row.county,row.brand,row.end_date].join('|');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(row);
+  }
+  const imported=[];
+  for(const group of groups.values()){const support=Object.fromEntries(group.map(x=>[x.candidate,Number(x.support)]));if(Object.keys(support).length<2||Object.keys(support).length!==group.length||Object.values(support).reduce((a,b)=>a+b,0)>100.5)throw Error('同份民調至少兩位候選人，且支持率合計不得超過100%');
+   const total=Object.values(support).reduce((a,b)=>a+b,0);imported.push({year:2026,kind:'local',race:group[0].county,name:group[0].brand,end_date:group[0].end_date,source_url:group[0].source_url,support,normalized:Object.fromEntries(Object.entries(support).map(([k,v])=>[k,v/total*100]))});
+  }
+  localPolls=imported;importStatus.textContent='已在本機載入 '+imported.length+' 份調查；沒有上傳到網站或 GitHub。僅符合模型門檻的縣市會產生試算。';select(activeCounty.name);
+ }catch(e){importStatus.textContent='匯入失敗：'+e.message;}
+});
 select('臺北市');
 })();
